@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <!-- jquery -->
+    <script src="https://code.jquery.com/jquery-3.4.1.js"
+        integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU=" crossorigin="anonymous"></script>
+    <!-- bootstrap css+js -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+
+    <script>
+        $(document).ready(function () {
+            $("#toggleSignIn").click(function () {
+                $("#toggleSignIn").addClass("active");
+                $(".my-signin").removeClass("d-none");
+
+                $("#toggleSignUp").removeClass("active");
+                $(".my-signup").addClass("d-none");
+            });
+
+            $("#toggleSignUp").click(function () {
+                $("#toggleSignUp").addClass("active");
+                $(".my-signup").removeClass("d-none");
+
+                $("#toggleSignIn").removeClass("active");
+                $(".my-signin").addClass("d-none");
+            });
+        });
+    </script>
+
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="row mb-3">
+            <div class="col-2">
+                <button type="button" class="btn btn-primary active" id="toggleSignIn">Sign in</button>
+            </div>
+            <div class="col-2">
+                <button type="button" class="btn btn-primary" id="toggleSignUp">Sign up</button>
+            </div>
+        </div>
+
+        <div class="my-signin">
+            <form action="/login" method="post">
+                {{ form.hidden_tag() }}
+                <div class="row my_in">
+                    <div class="col-md-3">
+                        <p>username</p>
+                    </div>
+                    <div class="col-md-9">
+                        <input type="text" name="username">
+                    </div>
+                </div>
+
+                <div class="row my_in">
+                    <div class="col-md-3">
+                        <p>password</p>
+                    </div>
+                    <div class="col-md-9">
+                        <input type="text" name="password">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3">
+                        <input type="submit" value="login">
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="my-signup d-none">
+            <form action="/signup" method="post">
+                {{ form.hidden_tag() }}
+                <div class="row">
+                    <div class="col-md-3">
+                        <p>e-mail</p>
+                    </div>
+                    <div class="col-md-9">
+                        <input type="text" name="email">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <p>username</p>
+                    </div>
+                    <div class="col-md-9">
+                        <input type="text" name="username">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <p>password</p>
+                    </div>
+                    <div class="col-md-9">
+                        <input type="text" name="password">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3">
+                        <input type="submit" value="register">
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+</body>
+
+</html>
