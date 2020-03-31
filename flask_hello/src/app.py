@@ -12,9 +12,11 @@ app = Flask(__name__)
 CSRF_ENABLED = True
 app.config['SECRET_KEY'] = "sdxLWlkwejWLEKwvbsmdXXMCVBWEUwefoimHf"
 
+conn = sqlite3.connect("test.db")
+conn.cursor().execute("create table if not exists users (username text, password text, email text)")
+conn.commit
 
-
-print(sqlite3.connect("test.db").cursor().execute("select * from users").fetchall())
+print(conn.cursor().execute("select * from users").fetchall())
 
 class User:
     def __init__(self, username, password, email):
