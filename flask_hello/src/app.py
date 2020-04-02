@@ -6,6 +6,7 @@ from wtforms.validators import DataRequired
 
 from db.user_db import UserDb
 import sqlite3
+from logger import log
 
 app = Flask(__name__)
 
@@ -29,10 +30,22 @@ class MyForm(FlaskForm):
     def name(self):
         return self.username.data
 
+    @property
+    def passwd(self):
+        return self.password.data
+
 
 class MyFormWithEmail(MyForm):
     email = StringField('email', validators=[DataRequired()])
     accept = BooleanField('accept')
+
+    @property
+    def e_mail(self):
+        return self.email.data
+
+    @property
+    def is_accepted(self):
+        return self.accept.data
 
 
 @app.route('/')
@@ -44,26 +57,32 @@ def index():
 def submit_login():
     form = MyForm()
     if form.validate_on_submit():
-        if mydb.are_valid_credentials(form.username.data, form.password.data):
+        log(log.INFO, 'Login user %s', form.name)
+        if mydb.are_valid_credentials(form.name, form.passwd):
+            log(log.INFO, 'login successed')
             return "success login"
         else:
+            log(log.WARNING, 'login failed')
             return "such user does not exist"
     else:
-        print("form invalid")
-        print(form.errors)
+        log(log.ERROR, 'form invalid')
+        log(log.ERROR, form.errors)
         return render_template('index.html', form=form)
 
 
 @app.route('/signup', methods=['POST'])
 def submit_signup():
     form = MyFormWithEmail()
+    log(log.INFO, 'New user: %s', form.name)
     if form.validate_on_submit():
-        if mydb.contains_user(form.username.data):
-            return "user already exist"
+        if mydb.contains_user(form.name):
+            log(log.WARNING, 'user alredy exists')
+            return "user already exists"
         else:
-            mydb.create_user(form.name, form.password.data, form.email.data)
+            mydb.create_user(form.name, form.passwd, form.e_mail)
+            log(log.INFO, 'user succesfully added')
             return "success signup"
     else:
-        print("form invalid")
-        print(form.errors)
+        log(log.ERROR, 'form invalid')
+        log(log.ERROR, form.errors)
         return render_template('index.html', form=form)
