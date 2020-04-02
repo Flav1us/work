@@ -2,9 +2,9 @@ from flask import Flask
 from flask import render_template
 from flask_wtf import FlaskForm
 from wtforms import StringField, BooleanField
-from wtforms.validators import DataRequired 
+from wtforms.validators import DataRequired
 
-import mydb
+from db.user_db import UserDb
 import sqlite3
 
 app = Flask(__name__)
@@ -18,16 +18,15 @@ conn.commit
 
 print(conn.cursor().execute("select * from users").fetchall())
 
-class User:
-    def __init__(self, username, password, email):
-        self.username = username
-        self.password = password
-        self.email = email
-
+mydb = UserDb()
 
 class MyForm(FlaskForm):
     username = StringField('username', validators=[DataRequired()])
     password = StringField('password', validators=[DataRequired()])
+
+    @property
+    def name(self):
+        return self.username.data
 
 class MyFormWithEmail(MyForm):
     email = StringField('email', validators=[DataRequired()])
@@ -41,9 +40,9 @@ def index():
 def submit_login():
     form = MyForm()
     if form.validate_on_submit():
-        if mydb.areValidCredentials(form.username.data, form.password.data):
+        if mydb.are_valid_credentials(form.username.data, form.password.data):
             return "success login"
-        else:    
+        else:
             return "such user does not exist"
     else:
         print("form invalid")
@@ -54,10 +53,10 @@ def submit_login():
 def submit_signup():
     form = MyFormWithEmail()
     if form.validate_on_submit():
-        if mydb.containsUser(form.username.data):
+        if mydb.contains_user(form.username.data):
             return "user already exist"
-        else:   
-            mydb.createUser(form.username.data, form.password.data, form.email.data)
+        else:
+            mydb.create_user(form.name, form.password.data, form.email.data)
             return "success signup"
     else:
         print("form invalid")
