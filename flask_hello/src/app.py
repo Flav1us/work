@@ -20,6 +20,7 @@ print(conn.cursor().execute("select * from users").fetchall())
 
 mydb = UserDb()
 
+
 class MyForm(FlaskForm):
     username = StringField('username', validators=[DataRequired()])
     password = StringField('password', validators=[DataRequired()])
@@ -28,13 +29,16 @@ class MyForm(FlaskForm):
     def name(self):
         return self.username.data
 
+
 class MyFormWithEmail(MyForm):
     email = StringField('email', validators=[DataRequired()])
     accept = BooleanField('accept')
 
+
 @app.route('/')
 def index():
     return render_template('index.html', form=MyForm())
+
 
 @app.route('/login', methods=['POST'])
 def submit_login():
@@ -48,6 +52,7 @@ def submit_login():
         print("form invalid")
         print(form.errors)
         return render_template('index.html', form=form)
+
 
 @app.route('/signup', methods=['POST'])
 def submit_signup():

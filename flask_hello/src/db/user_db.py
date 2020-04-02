@@ -23,7 +23,7 @@ class UserDb(object):
 
     def create_user(self, username, password, email):
         with db_session_ctx() as session:
-            user = User(name=username, password=password, email=email)
+            user = User(name=username, passwd=password, email=email)
             session.add(user)
 
     def are_valid_credentials(self, username, password):
