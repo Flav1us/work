@@ -1,6 +1,5 @@
 import sqlite3
 
-
 def containsUser(username):
     conn = sqlite3.connect("test.db")
     cursor = conn.cursor()

@@ -1,7 +1,7 @@
 from flask import Flask
 from flask import render_template
 from flask_wtf import FlaskForm
-from wtforms import StringField
+from wtforms import StringField, BooleanField
 from wtforms.validators import DataRequired 
 
 import mydb
@@ -31,6 +31,7 @@ class MyForm(FlaskForm):
 
 class MyFormWithEmail(MyForm):
     email = StringField('email', validators=[DataRequired()])
+    accept = BooleanField('accept')
 
 @app.route('/')
 def index():
