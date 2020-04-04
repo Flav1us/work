@@ -1,5 +1,5 @@
 from db.session import db_session_ctx
-from db.models import ModelBase, User
+from db.models import ModelBase, User, UserRole
 
 
 class UserDb(object):
@@ -15,6 +15,18 @@ class UserDb(object):
         """
         ModelBase.metadata.drop_all()
         ModelBase.metadata.create_all()
+
+    @staticmethod
+    def to_string():
+        with db_session_ctx(read_only=True) as session:
+            all = session.query(User).all()
+            print("database users:")
+            for user in all:
+                print(user)
+            all = session.query(UserRole).all()
+            print("user roles:")
+            for role in all:
+                print(role)
 
     def contains_user(self, username):
         with db_session_ctx(read_only=True) as session:

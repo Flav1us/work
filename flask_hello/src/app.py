@@ -5,19 +5,12 @@ from wtforms import StringField, BooleanField
 from wtforms.validators import DataRequired
 
 from db.user_db import UserDb
-import sqlite3
 from logger import log
 
 app = Flask(__name__)
 
 CSRF_ENABLED = True
 app.config['SECRET_KEY'] = "sdxLWlkwejWLEKwvbsmdXXMCVBWEUwefoimHf"
-
-conn = sqlite3.connect("test.db")
-conn.cursor().execute("create table if not exists users (username text, password text, email text)")
-conn.commit
-
-print(conn.cursor().execute("select * from users").fetchall())
 
 mydb = UserDb()
 

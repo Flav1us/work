@@ -23,7 +23,7 @@ class User(ModelBase):
         self.role_id = 0
 
     def __repr__(self):
-        return "<User(id:'{}', name:'{}'')>".format(self.id, self.name)
+        return "id: {}\tname: {}".format(self.id, self.name)
 
 
 class UserRole(ModelBase):
@@ -38,4 +38,4 @@ class UserRole(ModelBase):
         self.roleName = name
 
     def __repr__(self):
-        return "<File(id:'{}', roleName:'{}'".format(self.id, self.roleName)
+        return "id {}\troleName {}".format(self.id, self.roleName)

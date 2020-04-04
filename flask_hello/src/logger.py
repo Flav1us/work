@@ -14,8 +14,6 @@ LOGGER_NAME = 'MyLogger'
 
 
 class Logger(object):
-    # __created_std_out = False
-    log_file = bytes
     EXCEPTION = 100
     CRITICAL = 50
     ERROR = 40
