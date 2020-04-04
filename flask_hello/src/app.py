@@ -1,13 +1,11 @@
 from flask import Flask
 from flask import render_template
 from flask_wtf import FlaskForm
-from flask_user import UserManager, login_required
+from flask_user import login_required, UserManager, UserMixin
 from flask_sqlalchemy import SQLAlchemy
 from wtforms import StringField, BooleanField
 from wtforms.validators import DataRequired
 
-from db.user_db import UserDb
-from db.models import User
 from logger import log
 
 
@@ -19,7 +17,7 @@ class ConfigClass(object):
     SECRET_KEY = 'sdxLWlkwejWLEKwvbsmdXXMCVBWEUwefoimHf'
 
     # Flask-SQLAlchemy settings
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///test.db'    # File-based SQL database
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///sqla_test.db'    # File-based SQL database
     SQLALCHEMY_TRACK_MODIFICATIONS = False    # Avoids SQLAlchemy warning
 
     # Flask-User settings
@@ -36,9 +34,18 @@ CSRF_ENABLED = True
 # app.config['SECRET_KEY'] = "sdxLWlkwejWLEKwvbsmdXXMCVBWEUwefoimHf"
 
 sqla_db = SQLAlchemy(app)
-mydb = UserDb()
 
-user_manager = UserManager(app, sqla_db, User)
+
+class SQLA_User(sqla_db.Model, UserMixin):
+    __tablename__ = 'users'
+    id = sqla_db.Column(sqla_db.Integer, primary_key=True)
+    username = sqla_db.Column(sqla_db.String(80), unique=True)
+    password = sqla_db.Column(sqla_db.String(80))
+
+
+sqla_db.create_all()
+
+user_manager = UserManager(app, sqla_db, SQLA_User)
 
 
 class MyForm(FlaskForm):
@@ -77,7 +84,7 @@ def submit_login():
     form = MyForm()
     if form.validate_on_submit():
         log(log.INFO, 'Login user %s', form.name)
-        if mydb.are_valid_credentials(form.name, form.passwd):
+        if SQLA_User.query.filter_by(username=form.name, password=form.passwd).first():
             log(log.INFO, 'login successed')
             return "success login"
         else:
@@ -94,11 +101,13 @@ def submit_signup():
     form = MyFormWithEmail()
     log(log.INFO, 'New user: %s', form.name)
     if form.validate_on_submit():
-        if mydb.contains_user(form.name):
+        if SQLA_User.query.filter_by(username=form.name).first() is not None:
             log(log.WARNING, 'user alredy exists')
             return "user already exists"
         else:
-            mydb.create_user(form.name, form.passwd, form.e_mail)
+            ses = sqla_db.session()
+            ses.add(SQLA_User(username=form.name, password=form.passwd))
+            ses.commit()
             log(log.INFO, 'user succesfully added')
             return "success signup"
     else:
